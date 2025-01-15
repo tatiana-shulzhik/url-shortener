@@ -1,0 +1,33 @@
+services:
+  pg:
+    image: postgres:latest
+    container_name: pg-database
+    environment:
+      POSTGRES_USER: ${TYPEORM_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${TYPEORM_PASSWORD:-postgres}
+      POSTGRES_DB: ${TYPEORM_DATABASE:-url-shortener} 
+      PGDATA: /var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
+  pg_admin:
+    container_name: pg_admin
+    image: dpage/pgadmin4:8.9
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - '7777:80'
+    volumes:
+      - pgadmin_local:/var/lib/pgadmin
+    depends_on:
+      - pg
+    restart: always
+
+volumes:
+  postgres_data:
+  pgadmin_local:
+
