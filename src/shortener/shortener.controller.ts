@@ -8,6 +8,8 @@ import {
   Res,
   UseGuards,
   Req,
+  Headers,
+  Request,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { ShortenerService } from './shortener.service';
@@ -36,8 +38,14 @@ export class ShortenerController {
   async redirectToOriginal(
     @Param('shortUrl') shortUrl: string,
     @Res() res: Response,
+    @Headers('user-agent') userAgent: string,
+    @Request() request,
   ) {
-    const originalUrl = await this.shortenerService.getOriginalUrl(shortUrl);
+    const originalUrl = await this.shortenerService.getOriginalUrl(
+      shortUrl,
+      userAgent,
+      request,
+    );
     return res.redirect(originalUrl);
   }
 
@@ -59,5 +67,10 @@ export class ShortenerController {
   ) {
     const user = req['user'];
     return this.shortenerService.deleteShortLink(shortUrl, user.sub);
+  }
+
+  @Get('analytics/:shortUrl')
+  async getAnalytics(@Param('shortUrl') shortUrl: string) {
+    return this.shortenerService.getAnalytics(shortUrl);
   }
 }

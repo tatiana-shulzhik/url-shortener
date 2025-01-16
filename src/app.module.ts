@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { SessionModule } from './session/session.module';
 import { ShortenerModule } from './shortener/shortener.module';
+import { DeviceModule } from './device/device.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ShortenerModule } from './shortener/shortener.module';
     AuthModule,
     SessionModule,
     ShortenerModule,
+    DeviceModule,
   ],
   controllers: [AppController],
   providers: [AppService],

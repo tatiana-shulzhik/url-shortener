@@ -5,6 +5,8 @@ import { nanoid } from 'nanoid';
 import { ShortLink } from './entities/short-link.entity';
 import { CreateShortLinkDto } from './dto/create-short-link.dto';
 import { AuthService } from 'src/auth/auth.service';
+import { Request } from 'express';
+import { DeviceService } from 'src/device/device.service';
 
 @Injectable()
 export class ShortenerService {
@@ -12,6 +14,7 @@ export class ShortenerService {
     @InjectRepository(ShortLink)
     private readonly shortLinkRepository: Repository<ShortLink>,
     private readonly authService: AuthService,
+    private readonly deviceService: DeviceService,
   ) {}
 
   async createShortLink(
@@ -27,7 +30,11 @@ export class ShortenerService {
     return this.shortLinkRepository.save(shortLink);
   }
 
-  async getOriginalUrl(shortUrl: string): Promise<string> {
+  async getOriginalUrl(
+    shortUrl: string,
+    userAgent: string,
+    request: Request,
+  ): Promise<string> {
     const shortLink = await this.shortLinkRepository.findOne({
       where: { shortUrl },
     });
@@ -38,6 +45,8 @@ export class ShortenerService {
     ) {
       throw new NotFoundException('Short URL not found or expired');
     }
+
+    await this.deviceService.parseUserAgent(userAgent, request, shortLink.id);
 
     shortLink.clickCount += 1;
     await this.shortLinkRepository.save(shortLink);
@@ -83,5 +92,9 @@ export class ShortenerService {
     }
 
     return { message: 'Short URL deleted successfully' };
+  }
+
+  async getAnalytics(shortUrl: string) {
+    return this.deviceService.getAnalytics(shortUrl);
   }
 }

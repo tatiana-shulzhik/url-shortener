@@ -4,9 +4,10 @@ import { ShortenerService } from './shortener.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ShortLink } from './entities/short-link.entity';
 import { AuthModule } from 'src/auth/auth.module';
+import { DeviceModule } from 'src/device/device.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ShortLink]), AuthModule],
+  imports: [TypeOrmModule.forFeature([ShortLink]), AuthModule, DeviceModule],
   controllers: [ShortenerController],
   providers: [ShortenerService],
 })
