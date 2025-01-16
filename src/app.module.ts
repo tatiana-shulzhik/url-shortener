@@ -5,6 +5,7 @@ import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { SessionModule } from './session/session.module';
+import { ShortenerModule } from './shortener/shortener.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { SessionModule } from './session/session.module';
     DatabaseModule,
     AuthModule,
     SessionModule,
+    ShortenerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
