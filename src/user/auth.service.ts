@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
@@ -6,6 +6,8 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { LoginDto } from './dto/login.dto';
+import { SessionService } from 'src/session/session.service';
+import { RefreshTokenPayloadDto } from './dto/refresh-token-payload.dto';
 
 @Injectable()
 export class AuthService {
@@ -14,6 +16,7 @@ export class AuthService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly jwtService: JwtService,
+    private readonly sessionService: SessionService,
   ) {}
 
   async register(
@@ -51,22 +54,50 @@ export class AuthService {
     return this.userRepository.findOne({ where: { email } });
   }
 
-  async login(loginDto: LoginDto): Promise<{ accessToken: string }> {
-    try {
-      const { email, password } = loginDto;
-      const user = await this.findUserByEmail(email);
+  async login(
+    loginDto: LoginDto,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    const { email, password } = loginDto;
+    const user = await this.userRepository.findOne({ where: { email } });
+    const session = await this.sessionService.updateSession(user.id);
 
-      if (user && (await bcrypt.compare(password, user.password))) {
-        const payload = { email: user.email, sub: user.id };
-        const accessToken = this.jwtService.sign(payload);
+    if (user && (await bcrypt.compare(password, user.password))) {
+      const payload = { email: user.email, sub: user.id, session: session.id };
+      const accessToken = this.jwtService.sign(payload, { expiresIn: '1h' });
+      const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
 
-        return { accessToken };
-      }
-
-      throw new Error('Invalid credentials');
-    } catch (err) {
-      this.logger.error(err);
-      return err;
+      return { accessToken, refreshToken };
     }
+
+    throw new Error('Invalid credentials');
+  }
+
+  async refreshTokens(
+    decodedPayload: RefreshTokenPayloadDto,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    const { sub } = decodedPayload;
+    const user = await this.userRepository.findOne({ where: { id: sub } });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const newPayload = { email: user.email, sub: user.id };
+    const accessToken = this.jwtService.sign(newPayload, { expiresIn: '1h' });
+    const newRefreshToken = this.jwtService.sign(newPayload, {
+      expiresIn: '7d',
+    });
+
+    await this.sessionService.updateSession(user.id);
+
+    return { accessToken, refreshToken: newRefreshToken };
+  }
+
+  async logout(userId: string): Promise<void> {
+    await this.sessionService.deleteSession(userId);
+  }
+
+  async findUserById(id: string): Promise<User> {
+    return this.userRepository.findOne({ where: { id } });
   }
 }
