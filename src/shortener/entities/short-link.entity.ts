@@ -12,7 +12,7 @@ import { User } from '../../auth/entities/user.entity';
 @Entity()
 export class ShortLink {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @Column()
   originalUrl: string;
