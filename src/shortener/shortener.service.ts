@@ -1,4 +1,9 @@
-import { GoneException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  GoneException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { nanoid } from 'nanoid';
@@ -7,6 +12,7 @@ import { CreateShortLinkDto } from './dto/create-short-link.dto';
 import { AuthService } from 'src/auth/auth.service';
 import { Request } from 'express';
 import { DeviceService } from 'src/device/device.service';
+import { CreateShortLinkWithAliasDto } from './dto/create-short-link-with-alias.dto';
 
 @Injectable()
 export class ShortenerService {
@@ -96,5 +102,34 @@ export class ShortenerService {
 
   async getAnalytics(shortUrl: string) {
     return this.deviceService.getAnalytics(shortUrl);
+  }
+
+  async createShortLinkWithAlias(
+    dto: CreateShortLinkWithAliasDto,
+    userId: string,
+  ): Promise<ShortLink> {
+    const { alias, originalUrl, expiresAt } = dto;
+
+    const user = await this.authService.findUserById(userId);
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+
+    const existingAlias = await this.shortLinkRepository.findOne({
+      where: { shortUrl: alias },
+    });
+
+    if (existingAlias) {
+      throw new ConflictException('Alias already exists');
+    }
+
+    return await this.shortLinkRepository.save({
+      ...dto,
+      originalUrl,
+      shortUrl: alias,
+      user: { id: userId },
+      expiresAt,
+    });
   }
 }

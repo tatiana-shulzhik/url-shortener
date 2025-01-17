@@ -15,6 +15,7 @@ import { Response } from 'express';
 import { ShortenerService } from './shortener.service';
 import { CreateShortLinkDto } from './dto/create-short-link.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { CreateShortLinkWithAliasDto } from './dto/create-short-link-with-alias.dto';
 
 @Controller('shorten')
 export class ShortenerController {
@@ -72,5 +73,18 @@ export class ShortenerController {
   @Get('analytics/:shortUrl')
   async getAnalytics(@Param('shortUrl') shortUrl: string) {
     return this.shortenerService.getAnalytics(shortUrl);
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('/my-custom-alias')
+  async createShortLinkWithAlias(
+    @Body() createShortLinkWithAliasDto: CreateShortLinkWithAliasDto,
+    @Req() req: Request,
+  ) {
+    const user = req['user'];
+    return this.shortenerService.createShortLinkWithAlias(
+      createShortLinkWithAliasDto,
+      user.sub,
+    );
   }
 }
