@@ -9,9 +9,9 @@ import { Repository } from 'typeorm';
 import { nanoid } from 'nanoid';
 import { ShortLink } from './entities/short-link.entity';
 import { CreateShortLinkDto } from './dto/create-short-link.dto';
-import { AuthService } from 'src/auth/auth.service';
+import { AuthService } from '../auth/auth.service';
 import { Request } from 'express';
-import { DeviceService } from 'src/device/device.service';
+import { DeviceService } from '../device/device.service';
 import { CreateShortLinkWithAliasDto } from './dto/create-short-link-with-alias.dto';
 
 @Injectable()
