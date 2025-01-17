@@ -6,7 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { LoginDto } from './dto/login.dto';
-import { SessionService } from 'src/session/session.service';
+import { SessionService } from '../session/session.service';
 import { RefreshTokenPayloadDto } from './dto/refresh-token-payload.dto';
 
 @Injectable()
