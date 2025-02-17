@@ -1,99 +1,217 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Инструкция по установке и запуску проекта
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Минимально допустимые требования
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+- **NodeJS**: v21.7.3
+- **Docker**: v27.2.1
 
-## Description
+## Шаги установки
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Project setup
+### 1. Клонирование репозитория
+Склонируйте ветку `develop` из рабочего репозитория Gitlab:
 
 ```bash
-$ npm install
+git clone {Ссылка на репозиторий} -b {Имя рабочей ветки}
 ```
 
-## Compile and run the project
+### 2. Создание файла переменных окружения
+В корне проекта создайте файл `.env` и добавьте в него данные из `.env.example`.
+
+### 3. Установка локальных зависимостей
+Выполните команду для установки зависимостей:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm ci
 ```
 
-## Run tests
+### 4. Установка и запуск Docker-контейнеров
+Для установки и запуска необходимого ПО используйте следующую команду:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+docker-compose up -d
 ```
 
-## Deployment
+### 5. Работа с миграциями
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+Для работы с миграциями в проекте, выполните следующие команды:
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+#### 1. Запуск миграции
+Запустите миграцию для применения изменений:
 
 ```bash
-$ npm install -g mau
-$ mau deploy
+npm run migration:run
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+#### 2. Генерация миграции
+Для генерации новой миграции на основе изменений в сущностях выполните команду:
 
-## Resources
+```bash
+npm run migration:generate --name=MigrationName
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+Миграция будет сгенерирована в папке `./src/migrations/`.
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+#### 3. Создание миграции вручную
+Чтобы создать пустую миграцию:
 
-## Support
+```bash
+npm run migration:create --name=MigrationName
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Замените `<имя_миграции>` на название вашей миграции.
 
-## Stay in touch
+#### 4. Отмена последней миграции
+Для отката последней миграции:
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```bash
+npm run migration:revert
+```
 
-## License
+### 6. Запуск приложения и тестов
+После установки зависимостей и контейнеров в Docker запустите приложение в режиме разработки:
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+```bash
+npm run start:dev
+```
+
+Для запуска тестов выполните команду:
+
+```bash
+npm run test
+```
+
+Если вы хотите запустить тесты в режиме наблюдения (с автоматическим повторным запуском при изменении файлов), используйте:
+
+```bash
+npm run test:watch
+```
+
+Эти команды выполнит все тесты, которые находятся в вашем проекте, и выведут результаты в консоль. Убедитесь, что все тесты проходят успешно, прежде чем продолжить разработку.
+
+---
+
+## Эндпоинты AuthController
+
+1. **POST `/auth/register`**
+   - **Описание**: Регистрация нового пользователя.
+   - **Тело запроса**:
+     ```json
+     {
+       "firstName": "John",
+       "lastName": "Doe",
+       "email": "john.doe@example.com",
+       "password": "Password123"
+     }
+     ```
+   - **Ответ**:
+     - Успех: объект `User` или `{ message: 'User registered successfully' }`
+     - Ошибка: Сообщение об ошибке, если регистрация не удалась.
+
+2. **POST `/auth/login`**
+   - **Описание**: Авторизация пользователя и установка токенов доступа и обновления в cookies.
+   - **Тело запроса**:
+     ```json
+     {
+       "email": "john.doe@example.com",
+       "password": "Password123"
+     }
+     ```
+   - **Ответ**:
+     - Успех: `{ message: 'Login successful' }`
+   - **Cookies**:
+     - `access_token`: срок действия 1 час
+     - `refresh_token`: срок действия 7 дней
+
+3. **POST `/auth/refresh-tokens`**
+   - **Описание**: Обновление токенов доступа и обновления.
+   - **Guards**: Доступно только для авторизованных пользователей (через `AuthGuard`).
+   - **Запрос**: Информация о пользователе передается через `req['user']`.
+   - **Ответ**:
+     - Успех: `{ message: 'Tokens refreshed' }`
+   - **Cookies**:
+     - Новый `access_token` и `refresh_token` (1 час и 7 дней соответственно)
+
+4. **POST `/auth/logout`**
+   - **Описание**: Выход пользователя и удаление cookies с токенами.
+   - **Guards**: Доступно только для авторизованных пользователей (через `AuthGuard`).
+   - **Ответ**:
+     - Успех: `{ message: 'Logged out successfully' }`
+   - **Cookies**:
+     - Удаляет `access_token` и `refresh_token`
+
+---
+
+## Эндпоинты ShortenerController
+
+1. **POST `/shorten`**
+   - **Описание**: Создает сокращенную ссылку.
+   - **Guards**: Доступно только для авторизованных пользователей (через `AuthGuard`).
+   - **Тело запроса**:
+     ```json
+     {
+       "originalUrl": "https://example.com",
+       "expiresAt": "2025-02-16T12:00:00Z"
+     }
+     ```
+   - **Ответ**:
+     - Успех: Детали созданной короткой ссылки
+   - **Информация о пользователе**: `user.sub` используется для связывания ссылки с авторизованным пользователем.
+
+2. **GET `/shorten/:shortUrl`**
+   - **Описание**: Перенаправляет на оригинальный URL, связанный с сокращенной ссылкой.
+   - **Параметры**: `shortUrl` (идентификатор сокращенной ссылки)
+   - **Ответ**: Перенаправление на оригинальный URL
+
+3. **GET `/shorten/info/:shortUrl`**
+   - **Описание**: Получение информации о сокращенной ссылке.
+   - **Guards**: Доступно только для авторизованных пользователей (через `AuthGuard`).
+   - **Параметры**: `shortUrl` (идентификатор сокращенной ссылки)
+   - **Ответ**: Информация о сокращенной ссылке, включая детали создания
+
+4. **DELETE `/shorten/:shortUrl`**
+   - **Описание**: Удаление сокращенной ссылки.
+   - **Guards**: Доступно только для авторизованных пользователей (через `AuthGuard`).
+   - **Параметры**: `shortUrl` (идентификатор сокращенной ссылки)
+   - **Ответ**: Подтверждение удаления сокращенной ссылки
+
+5. **GET `/shorten/analytics/:shortUrl`**
+   - **Описание**: Получение аналитики по сокращенной ссылке.
+   - **Параметры**: `shortUrl` (идентификатор сокращенной ссылки)
+   - **Ответ**: Данные аналитики по сокращенной ссылке
+
+6. **POST `/shorten/my-custom-alias`**
+   - **Описание**: Создает сокращенную ссылку с заданным пользовательским алиасом.
+   - **Guards**: Доступно только для авторизованных пользователей (через `AuthGuard`).
+   - **Тело запроса**:
+     ```json
+     {
+       "originalUrl": "https://example.com",
+       "expiresAt": "2025-02-16T12:00:00Z",
+       "alias": "my-custom-alias"
+     }
+     ```
+   - **Ответ**: Созданная сокращенная ссылка с пользовательским алиасом
+
+---
+
+## Примечания
+
+- Убедитесь, что все переменные окружения корректно заполнены.
+- Команда `docker-compose` должна выполняться из корня проекта.
+
+## Дополнительная информация
+
+- **Доступ к PgAdmin**  
+  Для управления базой данных через PgAdmin:
+  - Адрес: `http://localhost:<порт_pgadmin>` (порт указан в `docker-compose.yml`)
+
+- **Очистка среды разработки**  
+  Чтобы полностью удалить контейнеры и связанные с ними данные:
+
+```bash
+docker-compose down -v
+```
+
+---
+
+Следуя этой инструкции, вы сможете развернуть проект, настроить его окружение и успешно запустить приложение. При возникновении дополнительных вопросов обратитесь к разработчикам или прочтите соответствующую документацию.
